@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emitir recibo</title>
+  <style>
+    :root { --ink: #1f2a30; --muted: #5d6b73; --line: #d6dde2; --paper: #f5f7f8; --brand: #24506b; --brand-soft: #e8f0f5; --warn: #9a3d1c; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif; }
+    main { max-width: 52rem; margin: 0 auto; padding: 2.25rem 1.25rem 3rem; }
+    h1 { font-size: 1.7rem; margin: 0 0 .3rem; letter-spacing: -.01em; }
+    p.lead { color: var(--muted); margin: 0 0 1.75rem; }
+    fieldset { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 1.1rem 1.25rem 1.25rem; margin: 0 0 1.1rem; }
+    legend { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); padding: 0 .4rem; }
+    .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: .9rem 1rem; }
+    .c2 { grid-column: span 2; } .c3 { grid-column: span 3; } .c4 { grid-column: span 4; } .c6 { grid-column: span 6; }
+    @media (max-width: 640px) { .grid > div { grid-column: span 6; } }
+    label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: .25rem; }
+    input { width: 100%; padding: .55rem .7rem; border: 1px solid #c3cdd3; border-radius: 6px; font: inherit; background: #fff; }
+    input.money { font-size: 1.15rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+    input[aria-invalid=true] { border-color: var(--warn); background: #fdf6f3; }
+    .hint { color: var(--muted); font-size: .85rem; margin-top: .25rem; min-height: 1.2em; }
+    .hint.ok { color: #2f6b4f; }
+    .err { color: var(--warn); font-size: .85rem; margin-top: .25rem; }
+    .words { background: var(--brand-soft); border-radius: 6px; padding: .55rem .75rem; color: var(--brand); font-size: .95rem; min-height: 2.6rem; }
+    .actions { display: flex; gap: .75rem; align-items: center; }
+    button { padding: .7rem 1.3rem; border: 0; border-radius: 6px; background: var(--brand); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+    button.secondary { background: #fff; color: var(--brand); border: 1px solid #b7c8d3; }
+    :focus-visible { outline: 3px solid #e3a92b; outline-offset: 2px; }
+    .alert { background: #fbeee9; border-left: 4px solid var(--warn); padding: .7rem 1rem; border-radius: 0 6px 6px 0; margin-bottom: 1.1rem; }
+    footer { margin-top: 2rem; color: var(--muted); font-size: .85rem; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Emitir recibo</h1>
+  <p class="lead">Preencha os dados e gere o PDF com duas vias, valor por extenso e espaço para assinatura.</p>
+  {% if errors %}<div class="alert" role="alert">Confira os campos destacados.</div>{% endif %}
+  {% macro field(name, label, cls="c3", type="text", hint="", attrs="") %}
+    <div class="{{ cls }}">
+      <label for="{{ name }}">{{ label }}</label>
+      <input id="{{ name }}" name="{{ name }}" type="{{ type }}" value="{{ v.get(name, '') }}" {{ attrs | safe }}
+        {% if errors.get(name) %}aria-invalid="true" aria-describedby="{{ name }}-err"{% endif %}>
+      {% if errors.get(name) %}<div class="err" id="{{ name }}-err">{{ errors[name] }}</div>
+      {% elif hint %}<div class="hint" id="{{ name }}-hint">{{ hint }}</div>{% endif %}
+    </div>
+  {% endmacro %}
+  <form method="post" action="/recibo" target="_blank" novalidate>
+    <fieldset>
+      <legend>Quem recebeu</legend>
+      <div class="grid">
+        {{ field("emitente", "Nome ou razão social", "c3", attrs='autocomplete="organization"') }}
+        {{ field("documento_emitente", "CPF ou CNPJ", "c3", hint=" ", attrs='data-doc inputmode="numeric"') }}
+        {{ field("cidade", "Cidade", "c3", attrs='autocomplete="address-level2"') }}
+        {{ field("numero", "Número do recibo", "c3", hint="Opcional. Sem número, usa a data.") }}
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Pagamento</legend>
+      <div class="grid">
+        {{ field("pagador", "Recebido de", "c4", attrs='autocomplete="name"') }}
+        {{ field("documento_pagador", "CPF ou CNPJ de quem pagou", "c2", hint="Opcional.", attrs='data-doc inputmode="numeric"') }}
+        <div class="c2">
+          <label for="valor">Valor (R$)</label>
+          <input id="valor" class="money" name="valor" inputmode="decimal" placeholder="0,00" value="{{ v.get('valor', '') }}"
+            {% if errors.get('valor') %}aria-invalid="true"{% endif %}>
+          {% if errors.get('valor') %}<div class="err">{{ errors['valor'] }}</div>{% endif %}
+        </div>
+        <div class="c4">
+          <label>Valor por extenso</label>
+          <div class="words" id="words" aria-live="polite"></div>
+        </div>
+        {{ field("referente", "Referente a", "c6") }}
+        {{ field("forma_pagamento", "Forma de pagamento", "c3", hint="PIX, dinheiro, cartão, transferência...") }}
+        {{ field("data", "Data", "c3", hint="dd/mm/aaaa") }}
+      </div>
+    </fieldset>
+    <div class="actions">
+      <button type="submit">Gerar PDF</button>
+      <button type="submit" class="secondary" name="download" value="1">Baixar PDF</button>
+    </div>
+  </form>
+  <footer>Os dados não são armazenados: o PDF é gerado na hora e enviado ao navegador.</footer>
+</main>
+<script>
+  const valor = document.getElementById("valor"), words = document.getElementById("words");
+  async function updateWords() {
+    if (!valor.value.trim()) { words.textContent = ""; return; }
+    const res = await fetch("/api/extenso?valor=" + encodeURIComponent(valor.value));
+    words.textContent = res.ok ? (await res.json()).extenso : "Valor inválido";
+  }
+  valor.addEventListener("input", updateWords); updateWords();
+  for (const input of document.querySelectorAll("input[data-doc]")) {
+    const hint = document.getElementById(input.id + "-hint");
+    const check = async () => {
+      if (!hint || !input.value.trim()) return;
+      const data = await (await fetch("/api/documento?numero=" + encodeURIComponent(input.value))).json();
+      hint.textContent = data.valido ? data.tipo + " válido" : "CPF ou CNPJ inválido";
+      hint.className = "hint" + (data.valido ? " ok" : "");
+    };
+    input.addEventListener("change", check); check();
+  }
+</script>
+</body>
+</html>

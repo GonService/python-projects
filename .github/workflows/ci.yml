@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  flask-report-automation:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: flask-report-automation
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: flask-report-automation/requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check . && ruff format --check .
+      - run: pytest -q
+      - run: docker build -t flask-report-automation .
+
+  django-helpdesk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: django-helpdesk
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: helpdesk
+          POSTGRES_USER: helpdesk
+          POSTGRES_PASSWORD: helpdesk
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U helpdesk" --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PASSWORD: helpdesk
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: django-helpdesk/requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check . && ruff format --check .
+      - run: python manage.py makemigrations --check --dry-run
+      - run: python manage.py test
+      - run: docker build -t django-helpdesk .
+
+  fastapi-appointments:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fastapi-appointments
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: fastapi-appointments/requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check . && ruff format --check .
+      - run: pytest -q
+      - run: docker build -t fastapi-appointments .
+
+  cloud-cost-checkup:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cloud-cost-checkup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: cloud-cost-checkup/requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check . && ruff format --check .
+      - run: pytest -q
+      - run: docker build -t cloud-cost-checkup .
+
+  pdf-receipts:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pdf-receipts
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pdf-receipts/requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check . && ruff format --check .
+      - run: pytest -q
+      - run: docker build -t pdf-receipts .

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Sales report {{ s.first_day }} to {{ s.last_day }}{% endblock %}
+{% block content %}
+<h1>Sales from {{ s.first_day.strftime('%d/%m/%Y') }} to {{ s.last_day.strftime('%d/%m/%Y') }}</h1>
+<p class="lead"><a class="button" href="/report/{{ download_key }}.xlsx">Download Excel</a> &nbsp; <a href="/">Upload another file</a></p>
+
+<dl class="figures">
+  <div><dt>Revenue</dt><dd>{{ s.revenue|brl }}</dd></div>
+  <div><dt>Orders</dt><dd>{{ s.orders }}</dd></div>
+  <div><dt>Units sold</dt><dd>{{ s.units }}</dd></div>
+  <div><dt>Average ticket</dt><dd>{{ s.average_ticket|brl }}</dd></div>
+</dl>
+
+<h2>Revenue by month</h2>
+<table>
+  <thead><tr><th>Month</th><th class="num">Revenue</th><th class="bar-cell"><span class="visually-hidden">Share of the best month</span></th></tr></thead>
+  <tbody>
+  {% for month, value in s.by_month.items() %}
+    <tr><td>{{ month }}</td><td class="num">{{ value|brl }}</td><td class="bar-cell"><div class="bar" style="width: {{ (value / peak * 100)|round(1) }}%"></div></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>By category</h2>
+<table>
+  <thead><tr><th>Category</th><th class="num">Revenue</th><th class="num">Share</th></tr></thead>
+  <tbody>
+  {% for name, value in s.by_category %}
+    <tr><td>{{ name }}</td><td class="num">{{ value|brl }}</td><td class="num">{{ (value / s.revenue * 100)|round(1) if s.revenue else 0 }}%</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>Top products</h2>
+<table>
+  <thead><tr><th>Product</th><th class="num">Units</th><th class="num">Revenue</th></tr></thead>
+  <tbody>
+  {% for name, units, value in s.top_products %}
+    <tr><td>{{ name }}</td><td class="num">{{ units }}</td><td class="num">{{ value|brl }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% if s.by_seller %}
+<h2>By seller</h2>
+<table>
+  <thead><tr><th>Seller</th><th class="num">Revenue</th></tr></thead>
+  <tbody>
+  {% for name, value in s.by_seller %}
+    <tr><td>{{ name }}</td><td class="num">{{ value|brl }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if s.skipped_rows %}
+<h2>Rows ignored ({{ s.skipped_rows|length }})</h2>
+<div class="error"><ul>{% for r in s.skipped_rows[:20] %}<li>{{ r }}</li>{% endfor %}</ul>
+{% if s.skipped_rows|length > 20 %}<p>…and {{ s.skipped_rows|length - 20 }} more.</p>{% endif %}
+<p>Fix these rows in the spreadsheet and upload it again to include them.</p></div>
+{% endif %}
+{% endblock %}

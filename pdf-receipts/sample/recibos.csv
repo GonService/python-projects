@@ -1,0 +1,7 @@
+numero;data;pagador;documento_pagador;valor;referente;forma_pagamento
+2026-0101;05/10/2026;Ana Paula Ribeiro;526.018.159-06;1.200,50;plano trimestral de pilates (outubro a dezembro de 2026);PIX
+2026-0102;05/10/2026;Carlos Eduardo Lima;083.016.613-05;480,00;mensalidade de pilates - outubro/2026;Cartão de débito
+2026-0103;06/10/2026;Fernanda Souza;186.091.390-34;95,00;aula avulsa de pilates;Dinheiro
+2026-0104;07/10/2026;Construtora Vale do Sinos Ltda;87.574.911/0001-00;3.750,00;programa de ginástica laboral - setembro/2026;Transferência bancária
+2026-0105;08/10/2026;João Pedro Martins;996.030.824-30;480,00;mensalidade de pilates - outubro/2026;PIX
+2026-0106;09/10/2026;Mariana Costa;628.194.821-12;1.001,01;pacote de 12 sessões de fisioterapia;PIX

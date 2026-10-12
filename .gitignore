@@ -1,0 +1,13 @@
+__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/
+db.sqlite3
+staticfiles/
+.env
+.DS_Store
+*.db
+cost-report.html
+cost-report.json
+demo-report.html
+recibos/

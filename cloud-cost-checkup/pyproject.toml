@@ -1,0 +1,30 @@
+[project]
+name = "cloud-cost-checkup"
+version = "1.0.0"
+description = "Read-only scan of an AWS account for resources that cost money without doing work"
+requires-python = ">=3.12"
+dynamic = ["dependencies"]
+
+[project.scripts]
+costcheck = "costcheck.cli:main"
+
+[tool.setuptools]
+packages = ["costcheck"]
+
+[tool.setuptools.package-data]
+costcheck = ["templates/*.html"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# botocore and moto still call datetime.utcnow()
+filterwarnings = ["ignore:datetime.datetime.utcnow:DeprecationWarning"]

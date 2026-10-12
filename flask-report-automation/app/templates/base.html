@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Sales report{% endblock %}</title>
+  <style>
+    :root { --ink: #1d2733; --muted: #5b6776; --line: #d9dee5; --paper: #fbfcfd; --ledger: #2f6f5e; --ledger-soft: #e3efea; --warn: #9a5b13; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.55 "Source Sans 3", "Segoe UI", system-ui, sans-serif; }
+    main { max-width: 60rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+    h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .4rem; letter-spacing: -.01em; }
+    h2 { font-size: 1.15rem; margin: 2.2rem 0 .8rem; }
+    p.lead { color: var(--muted); margin: 0 0 1.8rem; max-width: 42rem; }
+    a { color: var(--ledger); }
+    .drop { border: 2px dashed var(--line); border-radius: 10px; padding: 2rem; background: #fff; }
+    .drop input[type=file] { font: inherit; }
+    button, .button { display: inline-block; margin-top: 1rem; padding: .65rem 1.2rem; border: 0; border-radius: 6px; background: var(--ledger); color: #fff; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; }
+    button:focus-visible, .button:focus-visible, a:focus-visible { outline: 3px solid #f0b429; outline-offset: 2px; }
+    .error { background: #fdf1e6; border-left: 4px solid var(--warn); padding: .8rem 1rem; margin-bottom: 1.2rem; }
+    .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .figures div { background: #fff; padding: 1rem 1.1rem; }
+    .figures dt { color: var(--muted); font-size: .9rem; }
+    .figures dd { margin: .2rem 0 0; font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { text-align: left; padding: .5rem .4rem; border-bottom: 1px solid var(--line); }
+    td.num, th.num { text-align: right; }
+    .bar { height: .7rem; background: var(--ledger); border-radius: 0 3px 3px 0; min-width: 2px; }
+    .bar-cell { width: 45%; }
+    code { background: var(--ledger-soft); padding: .05rem .3rem; border-radius: 4px; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    footer { margin-top: 3rem; color: var(--muted); font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <main>
+    {% block content %}{% endblock %}
+    <footer>Files are processed in memory and not stored. Excel downloads expire after 15 minutes.</footer>
+  </main>
+</body>
+</html>

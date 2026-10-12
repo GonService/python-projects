@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Turn your sales spreadsheet into a report</h1>
+<p class="lead">Upload a CSV or Excel file with one sale per row. You get revenue by month, category, product and seller, plus an Excel file with the summary.</p>
+{% if error %}<div class="error" role="alert">{{ error }}</div>{% endif %}
+<form class="drop" action="/report" method="post" enctype="multipart/form-data">
+  <label for="file"><strong>Spreadsheet</strong> (.csv or .xlsx, up to {{ max_mb }} MB)</label><br>
+  <input id="file" name="file" type="file" accept=".csv,.xlsx" required>
+  <br><button type="submit">Create report</button>
+</form>
+<h2>Expected columns</h2>
+<p><code>date</code>, <code>product</code>, <code>category</code>, <code>quantity</code>, <code>unit_price</code> and, optionally, <code>seller</code>. Portuguese headers (<code>data</code>, <code>produto</code>, <code>quantidade</code>…) and Brazilian number formats such as <code>R$ 1.234,50</code> also work.
+<a href="https://github.com/GonService/python-projects/blob/main/flask-report-automation/sample/sales.csv">Sample file</a>.</p>
+{% endblock %}

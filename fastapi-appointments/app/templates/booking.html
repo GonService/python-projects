@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Agendamento {{ b.code }}{% endblock %}
+{% block style %}
+    .summary { display: grid; grid-template-columns: 9rem 1fr; gap: .55rem 1rem; margin: 0 0 1.5rem; }
+    .summary dt { color: var(--muted); }
+    .summary dd { margin: 0; font-weight: 600; }
+    .badge { display: inline-block; padding: .1rem .6rem; border-radius: 99px; font-size: .85rem; font-weight: 600; }
+    .badge.confirmed { background: var(--brand-soft); color: var(--brand); }
+    .badge.cancelled { background: var(--warn-soft); color: var(--warn); }
+    .panel { max-width: 36rem; }
+{% endblock %}
+{% block content %}
+<h1>{% if b.status == "confirmed" %}Agendamento confirmado{% else %}Agendamento cancelado{% endif %}</h1>
+<p class="lead">Guarde este link: é por ele que você consulta ou cancela o horário.</p>
+<div class="panel">
+  <dl class="summary">
+    <dt>Serviço</dt><dd>{{ b.service.name }}</dd>
+    <dt>Data</dt><dd>{{ b.starts_at | longdate }}</dd>
+    <dt>Horário</dt><dd>{{ b.starts_at | hhmm }} às {{ b.ends_at | hhmm }}</dd>
+    <dt>Nome</dt><dd>{{ b.customer_name }}</dd>
+    <dt>Código</dt><dd><code>{{ b.code }}</code></dd>
+    <dt>Situação</dt><dd><span class="badge {{ b.status }}">{{ "Confirmado" if b.status == "confirmed" else "Cancelado" }}</span></dd>
+  </dl>
+  {% if can_cancel %}
+  <form method="post" action="/booking/{{ b.code }}/cancel"><button class="secondary" type="submit">Cancelar agendamento</button></form>
+  {% endif %}
+</div>
+<p><a href="/">Fazer outro agendamento</a></p>
+{% endblock %}

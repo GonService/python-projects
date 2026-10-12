@@ -1,0 +1,4 @@
+-r requirements.txt
+moto[ec2,sts]==5.0.18
+pytest==8.3.3
+ruff==0.7.1

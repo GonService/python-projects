@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Agendamento online{% endblock %} · {{ business }}</title>
+  <style>
+    :root { --ink: #1f2a30; --muted: #5d6b73; --line: #dde3e6; --paper: #f6f8f8; --brand: #2b6a73; --brand-soft: #e2eff0; --warn: #9a4b1c; --warn-soft: #fbefe7; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 "Source Sans 3", "Segoe UI", system-ui, sans-serif; }
+    header.top { background: #fff; border-bottom: 1px solid var(--line); }
+    header.top div { max-width: 62rem; margin: 0 auto; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+    header.top strong { font-size: 1.1rem; letter-spacing: -.01em; }
+    header.top span { color: var(--muted); font-size: .92rem; }
+    main { max-width: 62rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    h1 { font-size: 1.75rem; line-height: 1.2; margin: 0 0 .35rem; letter-spacing: -.01em; }
+    h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 .75rem; }
+    p.lead { color: var(--muted); margin: 0 0 1.75rem; }
+    a { color: var(--brand); }
+    .panel { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 1.25rem; }
+    button { padding: .7rem 1.3rem; border: 0; border-radius: 6px; background: var(--brand); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+    button.secondary { background: #fff; color: var(--warn); border: 1px solid #e4c9b8; }
+    :focus-visible { outline: 3px solid #e3a92b; outline-offset: 2px; }
+    .error { background: var(--warn-soft); border-left: 4px solid var(--warn); padding: .75rem 1rem; margin-bottom: 1.25rem; border-radius: 0 6px 6px 0; }
+    footer { margin-top: 3rem; color: var(--muted); font-size: .88rem; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    {% block style %}{% endblock %}
+  </style>
+</head>
+<body>
+  <header class="top"><div><strong>{{ business }}</strong><span>Agendamento online</span></div></header>
+  <main>
+    {% block content %}{% endblock %}
+    <footer>Precisa remarcar? Cancele pelo link de confirmação e escolha outro horário.</footer>
+  </main>
+</body>
+</html>
